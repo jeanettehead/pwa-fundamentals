@@ -24,6 +24,9 @@ import OrderStore from './data/order-store';
 
 import { onQrCodeScan } from './utils/qrcode';
 
+// import 'worker-loader?name=?./qr-worker.js!./qr-worker.js';
+
+
 class App extends Component {
   constructor(props) {
     super(props);
