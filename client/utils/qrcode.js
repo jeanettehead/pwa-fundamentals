@@ -1,8 +1,5 @@
 import QrCode from 'qrcode-reader';
 
-// import Worker from 'worker-loader!../qr-worker.js';
-
-
 /**
  * Convert QRcode data into a grocery item
  * 
@@ -82,22 +79,27 @@ export function fileToImageBuffer(file) {
  */
 export function onQrCodeScan(imageBuffer, cartStore) {
   return new Promise((resolve/*, reject*/) => {
-
     // BEGIN MAIN THREAD SOLUTION
-    let worker = new Worker;
-    worker.postMessage({image: imageBuffer});
-    console.log('App Sent');
+    let worker = new Worker('./qr-worker.js');
 
-    worker.onMessage = (e) => {
-      console.log('got it', e)
-      if('data' in e.data) {
-        resolve(e.data.data);
+    worker.postMessage(imageBuffer);
+
+    worker.onmessage = evt => {
+      console.log('got it', evt)
+      if('data' in evt.data) {
+        resolve(evt.data.data);
       }
       
     }
+
+    worker.onerror = (e) => {
+      console.log('error', e);
+    }
+
     // END MAIN THREAD SOLUTION
     
   }).then((qrData) => {
+    console.log('then')
     cartStore.addItemToCart(qrData);
   });
 }

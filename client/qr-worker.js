@@ -1,12 +1,12 @@
 import QrCode from 'qrcode-reader';
 import {qrCodeStringToObject} from './utils/qrcode';
 
+const log = console.info.bind(console);
+log('helloooo')
 
-self.onmessge = ({data}) => {
-  decodeQrCode(data.image, data.resolve);
-}
-
-function decodeQrCode(image) {
+self.onmessage = evt => {
+  log(evt)
+  let imageBuffer = evt.data;
   let qr = new QrCode();
   qr.callback = function (error, rawResult) {
     log(error)
@@ -17,5 +17,5 @@ function decodeQrCode(image) {
     let result = qrCodeStringToObject(rawResult.result);
     self.postMessage({data: result});
   }
-  qr.decode(image);
-} 
+  qr.decode(imageBuffer);
+}
